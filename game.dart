@@ -124,3 +124,30 @@ bool checkForDraw() {
 String switchPlayer(String currentPlayer) {
   return currentPlayer == 'X' ? 'O' : 'X';
 }
+
+void main() {
+  String currentPlayer = 'X'; // Player 1 starts
+  bool gameEnded = false;
+
+  while (!gameEnded) {
+    displayBoard();
+    String input = getPlayerInput();
+
+    if (isValidInput(input)) {
+      updateGameState(input, currentPlayer);
+      if (checkForWinner(currentPlayer)) {
+        displayBoard();
+        print('Player $currentPlayer wins!');
+        gameEnded = true;
+      } else if (checkForDraw()) {
+        displayBoard();
+        print('It\'s a draw!');
+        gameEnded = true;
+      } else {
+        currentPlayer = switchPlayer(currentPlayer);
+      }
+    } else {
+      print('Invalid input. Please try again.');
+    }
+  }
+}
