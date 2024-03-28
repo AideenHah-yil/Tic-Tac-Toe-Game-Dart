@@ -71,4 +71,35 @@ void updateGameState(String input,String playerSymbol) {
     board[rowIndex][colIndex] = playerSymbol;
 }
 
+//function to check if there is a winner
 
+bool isWinner(String playerSymbol) {
+    for (int i = 0; i < board.length; i++) {
+        if (board[i][0] == playerSymbol && board[i][1] == playerSymbol && board[i][2] == playerSymbol) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//check for columns
+for (int j = 0; j < board[0].length; j++) {
+    if (board[0][j] == playerSymbol &&
+        board[1][j] == playerSymbol &&
+        board[2][j] == playerSymbol) {
+      return true;
+    }
+  }
+
+  // Check diagonals
+  if ((board[0][0] == playerSymbol &&
+          board[1][1] == playerSymbol &&
+          board[2][2] == playerSymbol) ||
+      (board[0][2] == playerSymbol &&
+          board[1][1] == playerSymbol &&
+          board[2][0] == playerSymbol)) {
+    return true;
+  }
+
+  return false;
+}
