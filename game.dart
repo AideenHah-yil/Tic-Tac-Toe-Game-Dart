@@ -104,3 +104,23 @@ bool checkForWinner(String playerSymbol) {
 
   return false;
 }
+
+// Function to check if the game has ended in a draw
+bool checkForDraw() {
+  for (int i = 0; i < board.length; i++) {
+    for (int j = 0; j < board[i].length; j++) {
+      // If any cell is empty, the game is not a draw
+      if (board[i][j] == '_') {
+        return false;
+      }
+    }
+  }
+  // If all cells are filled and there is no winner, it's a draw
+  return true;
+}
+
+
+// Function to switch players
+String switchPlayer(String currentPlayer) {
+  return currentPlayer == 'X' ? 'O' : 'X';
+}
