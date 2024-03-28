@@ -54,3 +54,21 @@ bool isValidInput(String input) {
 
 return true;
 }
+
+
+// function to update game board with user's move
+void updateGameState(String input,String playerSymbol) {
+    String row = input.substring(0, 1);
+    String col = input.substring(1);
+
+    //convert column to index
+    int colIndex = int.tryParse(col)! - 1;
+
+    //convert row letter to integer index
+    int rowIndex = row.codeUnitAt(0) - 'A'.codeUnitAt(0);
+
+    //update the game board with user symbol
+    board[rowIndex][colIndex] = playerSymbol;
+}
+
+
