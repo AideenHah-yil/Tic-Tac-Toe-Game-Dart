@@ -1,149 +1,163 @@
 import 'dart:io';
 
-List<List<String>> board = [
-  ['_', '_', '_'],
-  ['_', '_', '_'],
-  ['_', '_', '_']
-];
 
-// Function to display the game board
-void displayBoard() {
-  for (int i = 0; i < board.length; i++) {
-    for (int j = 0; j < board[i].length; j++) {
-      print(board[i][j] + ' ');
-    }
-    print('\n');
-  }
-}
-
-// Function to get player input
-String getPlayerInput() {
-  print('Enter your move (row and column, e.g., A1):');
-  String input = stdin.readLineSync()!.trim().toUpperCase();
-  return input;
-}
-
-// Function to validate player input
-bool isValidInput(String input) {
-  if (input.length != 2) {
-    return false;
-  }
-
-  String row = input.substring(0, 1);
-  String col = input.substring(1);
-
-  if (!(row == 'A' || row == 'B' || row == 'C') ||
-      !(col == '1' || col == '2' || col == '3')) {
-    return false;
-  }
-
-  int colIndex = int.tryParse(col)! - 1;
-  int rowIndex = row.codeUnitAt(0) - 'A'.codeUnitAt(0);
-
-  if (board[rowIndex][colIndex] != '_') {
-    return false;
-  }
-
-  return true;
-}
-
-// Function to update the game state with player's move
-void updateGameState(String input, String playerSymbol) {
-  String row = input.substring(0, 1);
-  String col = input.substring(1);
-
-  int colIndex = int.tryParse(col)! - 1;
-  int rowIndex = row.codeUnitAt(0) - 'A'.codeUnitAt(0);
-
-  board[rowIndex][colIndex] = playerSymbol;
-}
-
-// Function to check if there is a winner
-bool checkForWinner(String playerSymbol) {
-  for (int i = 0; i < board.length; i++) {
-    if (board[i][0] == playerSymbol &&
-        board[i][1] == playerSymbol &&
-        board[i][2] == playerSymbol) {
-      return true;
-    }
-  }
-
-  for (int j = 0; j < board[0].length; j++) {
-    if (board[0][j] == playerSymbol &&
-        board[1][j] == playerSymbol &&
-        board[2][j] == playerSymbol) {
-      return true;
-    }
-  }
-
-  if ((board[0][0] == playerSymbol &&
-          board[1][1] == playerSymbol &&
-          board[2][2] == playerSymbol) ||
-      (board[0][2] == playerSymbol &&
-          board[1][1] == playerSymbol &&
-          board[2][0] == playerSymbol)) {
-    return true;
-  }
-
-  return false;
-}
-
-// Function to check if the game has ended in a draw
-bool checkForDraw() {
-  for (int i = 0; i < board.length; i++) {
-    for (int j = 0; j < board[i].length; j++) {
-      if (board[i][j] == '_') {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-// Function to switch players
-String switchPlayer(String currentPlayer) {
-  return currentPlayer == 'X' ? 'O' : 'X';
-}
-
-// Function to start a new game
-void startNewGame() {
-  bool gameEnded = false;
-  String currentPlayer = 'X';
-
-  while (!gameEnded) {
-    displayBoard();
-    String input = getPlayerInput();
-
-    if (isValidInput(input)) {
-      updateGameState(input, currentPlayer);
-      if (checkForWinner(currentPlayer)) {
-        displayBoard();
-        print('Player $currentPlayer wins!');
-        gameEnded = true;
-      } else if (checkForDraw()) {
-        displayBoard();
-        print('It\'s a draw!');
-        gameEnded = true;
-      } else {
-        currentPlayer = switchPlayer(currentPlayer);
-      }
-    } else {
-      print('Invalid input. Please try again.');
-    }
-  }
-}
 
 void main() {
-  bool playAgain = true;
 
-  while (playAgain) {
-    startNewGame();
+ List<String> board = List.filled(9, ' '); // Create a list to represent the tic-tac-toe board, initialized with empty spaces
 
-    // Ask if players want to play again
-    print('Do you want to play again? (yes/no)');
-    String playAgainInput = stdin.readLineSync()!.toLowerCase();
-    playAgain = playAgainInput == 'yes';
+ bool isPlayer1Turn = true; // Variable to keep track of player's turn
+
+ int moves = 0; // Variable to count the number of moves made
+
+
+
+ print('Welcome to Tic-Tac-Toe!\n'); // Print a welcome message
+
+ printBoard(board); // Call a function to print the current state of the board
+
+
+
+ while (true) {
+
+  print('\n${isPlayer1Turn ? "Player 1" : "Player 2"}, enter your move (1-9): '); // Prompt the current player to enter their move
+
+
+
+  String? input = stdin.readLineSync(); // Read the input from the player
+
+   
+
+  if (input == null) {
+
+   print('Invalid input. Please try again.');
+
+   continue;
+
   }
 
-  print('Thanks for playing!');
+
+
+  try {
+
+   int move = int.parse(input); // Convert the input to an integer
+
+
+
+   if (move < 1 || move > 9 || board[move - 1] != ' ') { // Check if the move is invalid
+
+    print('Invalid move. Try again.');
+
+    continue;
+
+   }
+
+
+
+   board[move - 1] = isPlayer1Turn ? 'X' : 'O'; // Update the board with the current player's move
+
+   moves++;
+
+   printBoard(board);
+
+
+
+   if (checkWin(board)) { // Check if there is a winner
+
+    print('${isPlayer1Turn ? "Player 1" : "Player 2"} wins!');
+
+    break;
+
+   } else if (moves == 9) { // Check if it's a draw
+
+    print("It's a draw!");
+
+    break;
+
+   }
+
+
+
+   isPlayer1Turn = !isPlayer1Turn; // Switch turns between players
+
+  } catch (e) {
+
+   print('Invalid input. Please enter a number (1-9).');
+
+  }
+
+ }
+
+}
+
+
+
+void printBoard(List<String> board) { // Function to print the current state of the board
+
+ print('');
+
+ print(' ${board[0]} | ${board[1]} | ${board[2]} '); // Print the first row of the board
+
+ print('-----------');
+
+ print(' ${board[3]} | ${board[4]} | ${board[5]} '); // Print the second row of the board
+
+ print('-----------');
+
+ print(' ${board[6]} | ${board[7]} | ${board[8]} '); // Print the third row of the board
+
+ print('');
+
+}
+
+
+
+bool checkWin(List<String> board) { // Function to check if there is a winner
+
+ // Check rows
+
+ for (int i = 0; i < 9; i += 3) {
+
+  if (board[i] != ' ' && board[i] == board[i + 1] && board[i] == board[i + 2]) {
+
+   return true;
+
+  }
+
+ }
+
+
+
+ // Check columns
+
+ for (int i = 0; i < 3; i++) {
+
+  if (board[i] != ' ' && board[i] == board[i + 3] && board[i] == board[i + 6]) {
+
+   return true;
+
+  }
+
+ }
+
+
+
+ // Check diagonals
+
+ if (board[0] != ' ' && board[0] == board[4] && board[0] == board[8]) {
+
+  return true;
+
+ }
+
+ if (board[2] != ' ' && board[2] == board[4] && board[2] == board[6]) {
+
+  return true;
+
+ }
+
+
+
+ return false;
+
 }
